@@ -73,9 +73,22 @@ public class GoogleCastRemoteMediaClientListener
     map.putInt("streamPosition", (int)(mediaStatus.getStreamPosition() / 1000));
 
     MediaInfo info = mediaStatus.getMediaInfo();
+
+    final CastSession session = module.getCastSession();
+    if(session != null){
+        CastDevice device = session.getCastDevice();
+        String deviceName = device.getFriendlyName();
+        map.putString("deviceName", deviceName);
+    }
+
     if (info != null) {
         map.putInt("streamDuration", (int) (info.getStreamDuration() / 1000));
         MediaMetadata metadata = info.getMetadata();
+        if (metadata == null) {
+            WritableMap message = Arguments.createMap();
+            message.putMap("mediaStatus", map);
+            return message;
+        }
         String title = metadata.getString(KEY_TITLE);
         if(title != null) map.putString("title", title);
         String subtitle = metadata.getString(KEY_SUBTITLE);
@@ -83,12 +96,6 @@ public class GoogleCastRemoteMediaClientListener
         if(metadata.getImages().size() > 0){
             String imageUrl = metadata.getImages().get(0).getUrl().toString();
             map.putString("imageUrl", imageUrl);
-        }
-        final CastSession session = module.getCastSession();
-        if(session != null){
-            CastDevice device = session.getCastDevice();
-            String deviceName = device.getFriendlyName();
-            map.putString("deviceName", deviceName);
         }
     }
     WritableMap message = Arguments.createMap();
