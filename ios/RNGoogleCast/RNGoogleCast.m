@@ -360,6 +360,23 @@ RCT_EXPORT_METHOD(setVolume : (float)volume) {
   double position = mediaStatus.streamPosition;
   double duration = mediaStatus.mediaInformation.streamDuration;
 
+  GCKMediaInformation* mediaInformation = mediaStatus.mediaInformation;
+  NSArray<NSNumber *>* activeTrackIDs = mediaStatus.activeTrackIDs;
+  NSString* selectedSubtitleLanguage = nil;
+    
+  if (mediaInformation != nil && activeTrackIDs != nil) {
+    NSArray<GCKMediaTrack *>* mediaTracks = mediaInformation.mediaTracks;
+    if (mediaTracks != nil) {
+      for(GCKMediaTrack* mediaTrack in mediaTracks) {
+        for(NSNumber* activeId in activeTrackIDs) {
+          if (activeId == [NSNumber numberWithLongLong:mediaTrack.identifier]) {
+            selectedSubtitleLanguage = mediaTrack.languageCode;              
+          }
+        }
+      }
+    }
+  }
+
   GCKMediaMetadata* metadata = mediaStatus.mediaInformation.metadata;
   NSString* title = [metadata stringForKey:kGCKMetadataKeyTitle];
   NSString* subtitle = [metadata stringForKey:kGCKMetadataKeySubtitle];
@@ -376,6 +393,7 @@ RCT_EXPORT_METHOD(setVolume : (float)volume) {
     @"streamDuration": isinf(duration) || isnan(duration) ? [NSNull null] : @(duration),
     @"title": title ?: [NSNull null],
     @"subtitle": subtitle ?: [NSNull null],
+    @"selectedSubtitleLanguage": selectedSubtitleLanguage == nil ? [NSNull null] : selectedSubtitleLanguage,
     @"imageUrl": imageUrl ?: [NSNull null],
     @"deviceName": deviceName ?: [NSNull null],
   };
