@@ -8,6 +8,7 @@ import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaStatus;
+import com.google.android.gms.cast.MediaTrack;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 
@@ -82,6 +83,24 @@ public class GoogleCastRemoteMediaClientListener
     }
 
     if (info != null) {
+        // Figure out selected subtitles
+        List<MediaTrack> mediaTracks = info.getMediaTracks();
+        long[] selectedTrackIds = mediaStatus.getActiveTrackIds();
+
+        if (mediaTracks != null && selectedTrackIds != null) {
+            for (int i = 0; i <= mediaTracks.size() - 1; i += 1) {
+                MediaTrack thisMediaTrack = mediaTracks.get(i);
+
+                if (thisMediaTrack != null && thisMediaTrack.getType() == MediaTrack.TYPE_TEXT) {
+                    for (long id : selectedTrackIds) {
+                        if (thisMediaTrack.getId() == id) {
+                            map.putString("selectedSubtitleLanguage", thisMediaTrack.getLanguage());
+                        }
+                    }
+                }
+            }
+        }
+
         map.putInt("streamDuration", (int) (info.getStreamDuration() / 1000));
         MediaMetadata metadata = info.getMetadata();
         if (metadata == null) {
