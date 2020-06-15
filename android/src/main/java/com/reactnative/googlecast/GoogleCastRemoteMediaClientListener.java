@@ -91,10 +91,14 @@ public class GoogleCastRemoteMediaClientListener
             for (int i = 0; i <= mediaTracks.size() - 1; i += 1) {
                 MediaTrack thisMediaTrack = mediaTracks.get(i);
 
-                if (thisMediaTrack != null && thisMediaTrack.getType() == MediaTrack.TYPE_TEXT) {
+                if (thisMediaTrack != null) {
                     for (long id : selectedTrackIds) {
                         if (thisMediaTrack.getId() == id) {
-                            map.putString("selectedSubtitleLanguage", thisMediaTrack.getLanguage());
+                            if (thisMediaTrack.getType() == MediaTrack.TYPE_TEXT) {
+                                map.putString("selectedSubtitleLanguage", thisMediaTrack.getLanguage());
+                            } else if (thisMediaTrack.getType() == MediaTrack.TYPE_AUDIO) {
+                                map.putString("selectedAudioLanguage", thisMediaTrack.getLanguage());
+                            }
                         }
                     }
                 }
