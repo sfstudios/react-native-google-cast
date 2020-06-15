@@ -393,7 +393,7 @@ RCT_EXPORT_METHOD(setVolume : (float)volume) {
     @"streamDuration": isinf(duration) || isnan(duration) ? [NSNull null] : @(duration),
     @"title": title ?: [NSNull null],
     @"subtitle": subtitle ?: [NSNull null],
-    @"selectedSubtitleLanguage": selectedSubtitleLanguage == nil ? [NSNull null] : selectedSubtitleLanguage,
+    @"selectedSubtitleLanguage": selectedSubtitleLanguage ?: [NSNull null],
     @"imageUrl": imageUrl ?: [NSNull null],
     @"deviceName": deviceName ?: [NSNull null],
   };
