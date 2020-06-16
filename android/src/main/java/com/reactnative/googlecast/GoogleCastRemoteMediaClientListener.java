@@ -85,7 +85,7 @@ public class GoogleCastRemoteMediaClientListener
     }
 
     if (info != null) {
-        // Figure out selected subtitles
+        // Figure out selected subtitle and audio language
         List<MediaTrack> mediaTracks = info.getMediaTracks();
         long[] selectedTrackIds = mediaStatus.getActiveTrackIds();
 
