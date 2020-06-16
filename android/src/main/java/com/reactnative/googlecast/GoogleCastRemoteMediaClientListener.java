@@ -8,8 +8,11 @@ import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaStatus;
+import com.google.android.gms.cast.MediaTrack;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
+
+import java.util.List;
 
 import static com.google.android.gms.cast.MediaMetadata.KEY_SUBTITLE;
 import static com.google.android.gms.cast.MediaMetadata.KEY_TITLE;
@@ -82,6 +85,28 @@ public class GoogleCastRemoteMediaClientListener
     }
 
     if (info != null) {
+        // Figure out selected subtitle and audio language
+        List<MediaTrack> mediaTracks = info.getMediaTracks();
+        long[] selectedTrackIds = mediaStatus.getActiveTrackIds();
+
+        if (mediaTracks != null && selectedTrackIds != null) {
+            for (int i = 0; i <= mediaTracks.size() - 1; i += 1) {
+                MediaTrack thisMediaTrack = mediaTracks.get(i);
+
+                if (thisMediaTrack != null) {
+                    for (long id : selectedTrackIds) {
+                        if (thisMediaTrack.getId() == id) {
+                            if (thisMediaTrack.getType() == MediaTrack.TYPE_TEXT) {
+                                map.putString("selectedSubtitleLanguage", thisMediaTrack.getLanguage());
+                            } else if (thisMediaTrack.getType() == MediaTrack.TYPE_AUDIO) {
+                                map.putString("selectedAudioLanguage", thisMediaTrack.getLanguage());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         map.putInt("streamDuration", (int) (info.getStreamDuration() / 1000));
         MediaMetadata metadata = info.getMetadata();
         if (metadata == null) {
