@@ -455,11 +455,15 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                SessionManager sessionManager =
-                        CastContext.getSharedInstance(getReactApplicationContext())
-                                .getSessionManager();
-                sessionManager.addSessionManagerListener(mSessionManagerListener,
-                        CastSession.class);
+                try {
+                    SessionManager sessionManager =
+                            CastContext.getSharedInstance(getReactApplicationContext())
+                                    .getSessionManager();
+                    sessionManager.addSessionManagerListener(mSessionManagerListener,
+                            CastSession.class);
+                } catch(RuntimeException e) {
+                    CAST_AVAILABLE = false;
+                }
             }
         });
     }
@@ -469,11 +473,15 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                SessionManager sessionManager =
-                        CastContext.getSharedInstance(getReactApplicationContext())
-                                .getSessionManager();
-                sessionManager.removeSessionManagerListener(mSessionManagerListener,
-                        CastSession.class);
+                try {
+                    SessionManager sessionManager =
+                            CastContext.getSharedInstance(getReactApplicationContext())
+                                    .getSessionManager();
+                    sessionManager.removeSessionManagerListener(mSessionManagerListener,
+                            CastSession.class);
+                } catch(RuntimeException e) {
+                    CAST_AVAILABLE = false;
+                }
             }
         });
     }
